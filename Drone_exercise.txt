@@ -1,0 +1,120 @@
+//I assume that the get and set methods of each class are already implemented
+
+public enum Model
+	{
+		Lightweight, Middleweight, Cruiserweight, Heavyweight;
+	}
+
+public enum State
+	{
+		IDLE, LOADING, LOADED, DELIVERING, DELIVERED, RETURNING;
+	}
+
+public class Drone
+	{
+		char [100] serial_number;
+		Model model;
+		float weight;
+		float battery_cap;
+		State state;
+		ArrayList<Medication> medication_List; 
+		//get and set methods
+	}
+
+public class Medication
+	{
+		string name;
+		float weight;
+		string code;
+		char* image;
+		//get and set methods
+	}
+//--------------------------------
+public void register_drone(char[100] pSerial, Model pModel, float pWeight, float pBattery,State pState, ArrayList<Medication> pL_Medication )
+	{
+		Drone drone = new Drone();
+		drone.serial_number = pSerial;
+		drone.model = pModel;
+		drone.weight = pWeight;
+		drone.battery_cap = pBattery;
+		drone.State = pState;
+		drone.medication = pL_Medication;
+				
+	}
+
+public void load_Drone ()
+	{
+		Drone drone = new Drone();
+		Medication medicate = new Medication();
+		if(drone.state == IDLE)
+		{
+			for (int i=0; i < drone.medication_List.size(); i++)
+			{
+				drone.set_state(LOADING);
+				if (drone.weight < 500 && drone.battery_cap > 25)
+				{
+					medicate = drone.medication_List.get(i);
+					if(medicate.weight < 500)
+					{
+						drone.medication_List.add(medicate);
+						drone.weight += medicate.weight;
+					}
+				}
+			}		
+			
+		}
+		else
+		System.out.println("The drone could not load");
+	
+	drone.set_state(LOADED);
+	//save task
+	}	
+public void check_Medications(Drone pDrone)
+	{
+		load_Drone();
+		if ( pDrone.state == LOADED)
+		{
+			for (int i=0; i < pDrone.medication_List.size(); i++)
+			{
+				System.out.println(pDrone.medication_List.get(i));
+			}
+		}
+	
+	}	
+
+public void check_loading (ArrayList<Drone> pList_Drone)	
+	{
+		for (int i =0; i < pList_Drone.size(); i++)
+		{
+			Drone dron = pList_Drone.get(i);
+			if (dron.state != LOADING || dron.state != LOADED)
+				System.out.println(dron);
+		}
+	}
+	
+public float battery_level(Drone pDrone)
+	{
+		float bat_level = pDrone.get_Bat_Level();
+		return bat_level;
+	}	
+	
+public void check_BatLevel_Task(ArrayList<Drone> pDrone_list) //run a task once a day
+	{
+		BufferedWriter file_writer = new BufferedWriter(new FileWriter(batery_check.txt));
+		
+		for(int i = 0; i < pDrone_list.size(); i++)
+		{
+			Drone drone = pDrone_list.get(i);
+			float bat = drone.get_Bat_Level();
+			char[100] serial = drone.get_SerialNumber();
+			file_writer.write(bat);
+		}
+		
+		file_writer.close();
+		
+		TimerTask repeatedTask = new TimerTask()		
+		Timer timer = new Timer("Timer");		
+		long delay = 1000L;
+		long period = 1000L * 60L * 60L * 24L;
+		timer.scheduleAtFixedRate(repeatedTask, delay, period);
+	}
